@@ -1,2 +1,2 @@
 # ttk_demos
-Python3 ttk/tkinter demonstration programs
+Python3 </bttk/tkinter/> demonstration programs
