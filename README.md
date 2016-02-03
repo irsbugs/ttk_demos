@@ -10,7 +10,7 @@ programs is to aid with learning python programming with the ttk GUI.</font></p>
 <p><font face="FreeSans, sans-serif">program_01 Labels and Buttons</font></p>
 <p><font face="FreeSans, sans-serif">program_02 Frame with labels and
 buttons</font></p>
-<p><font face="FreeSans, sans-serif">program_03 Radiobutton.</font></p>
+<p><font face="FreeSans, sans-serif">program_03 Radiobutton.</font></p><p></p>
 <p><font face="FreeSans, sans-serif"><b>Notes:</b></font></p>
 <p><font face="FreeSans, sans-serif">Only python3 is supported. The
 programs feature the use of the ttk widget set. This is comprised of
@@ -21,5 +21,5 @@ tkinter widgets may be used, but they are not supported by the theme
 / style feature. </font>
 </p>
 <p><font face="FreeSans, sans-serif">All programs are written
-implementing the following python layout: </font>
+implementing a similar python layout. See template.py for more information. </font>
 </p>
