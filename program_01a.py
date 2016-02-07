@@ -115,7 +115,7 @@ class GUI_Application_Feature(ttk.Frame):
 
         # ===== Add widgets to grid =====
         self.label_1.grid(row=0, column=1, padx=5, pady=5, sticky="e")
-        self.button_1.grid(row=1, column=1, padx=10, pady=10)
+        self.button_1.grid(row=1, column=0, padx=10, pady=10)
         self.button_2.grid(row=1, column=2, padx=10, pady=10)
 
     def action_on_launch(self, argument):
