@@ -72,7 +72,7 @@ OFF_TEXT = "Off"
 
 # Main GUI application
 class GUI_Application_Feature(ttk.Frame):
-    """Main GUI for the featured widgets functionality"""
+
     def __init__(self, parent, argument):
         ttk.Frame.__init__(self, parent)
         """
