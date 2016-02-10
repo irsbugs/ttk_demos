@@ -2,10 +2,12 @@
 #
 # Program:      program_01e.py
 #
-# Objective:    GUI application template using buttons and labels
-#               Change the GUI aspects of program_01d.py. Toggle button
-#               Use instate and StringVar() textvariable on button 4.
+# Objective:    GUI application template.
+#               Standard GUI provides labels and a button
+#               Feature GUI - Increment / Decrement buttons and styled label
+#               Use instate and tk.StringVar() textvariable on toggle button.
 #               Use .invoke() on launching to achieve desired setup.
+#
 #
 # Written for:  Hamilton Python User Group - Presentation xxx 2016
 #               https://github.com/hampug
@@ -13,7 +15,7 @@
 #
 # Author:       Ian Stewart
 #
-# Date:         2016-Feb-02
+# Date:         2016-Feb-10
 #
 # Copyright:    This work is licensed under a Creative Commons
 #               Attribution-ShareAlike 4.0 International License.
@@ -21,7 +23,7 @@
 #
 # Notes:
 # 1. Indentation method: 4 x space characters per indentation
-# 2. #*** indicates a change between program_1d and program_1e
+# 2. # *** indicates a changes from previous revision
 #
 # Python modules to be imported. Plus checking
 import sys
@@ -34,75 +36,81 @@ if int(sys.version[0]) < 3:
     sys.exit()
 # Import tkinter and ttk modules
 try:
-    from tkinter import *
+    import tkinter as tk
 except ImportError as e:
-    print("Import Error: tkinter module for python3 is not available.")
-    print("To install tikinter: $ sudo apt-get install python3-tk")
+    print("Import Error: {}".format(e))
+    print("tkinter module for python3 is not available.")
+    print("To install tkinter: $ sudo apt-get install python3-tk")
     sys.exit()
 try:
     from tkinter import ttk
 except ImportError as e:
+    print("Import Error: {}".format(e))
     print("Import Error: tkinter.ttk module is not available.")
-    print("To install tikinter: $ sudo apt-get install python3-tk")
+    print("To install tkinter: $ sudo apt-get install python3-tk")
     sys.exit()
 
-# Define Constants:
-PROGRAM = "program_01e.py"  # ***
-VERSION = "1.0"
+# from tkinter import constants as C
+
+# Define Constants - Standard Section:
+PROGRAM = "program_01e.py"
+VERSION = "2.0"
 TITLE_1 = "GUI Application. {} {}".format(PROGRAM, VERSION)
 TITLE_2 = "Launching tkinter/ttk application. {} {}".format(PROGRAM, VERSION)
-INFO_1 = "Program to display squares and cubes. Toggle button"
-INFO_2 = "The command line argument value used: "
-BUTTON_1_TEXT = "Increment"
-BUTTON_2_TEXT = "Decrement"
-BUTTON_3_TEXT = "Close"
-BUTTON_4_TEXT = "Disable"
+INFO_1 = "Program to display squares and cubes. Style the buttons"  # ***
+INFO_2A = "No command line argument was passed on launching."
+INFO_2B = "The command line argument was "
+CLOSE_TEXT = "Close"
 
-# Define Variables:
+# Define Variables - Standard and Feature Section:
 argument_1 = 0  # For command line first argument (sys.argv[1]).
 
+# Define Constants - Feature Section:
+BUTTON_1_TEXT = "Increment"
+BUTTON_2_TEXT = "Decrement"
+BUTTON_3_TEXT = "Disable"
+
+# Define Variables - Feature Section:
+
+
 # Main GUI application
+class GUI_Application_Feature(ttk.Frame):
 
+    def __init__(self, parent, argument):
+        ttk.Frame.__init__(self, parent)
+        """
+        Initilization of GUI to feature more widgets
+        """
+        # self.parent = parent # <== not needed?
+        self.create_feature_widgets(argument)
+        self.action_on_launch(argument)
 
-class GUI_Application():
+    # ===== Start for Feature Section =====
+    def create_feature_widgets(self, argument):
 
-    def __init__(self, master, argument):
-        """Setup the style, widgets and initial appearance on launching"""
-        self.master = master
-        master.title(TITLE_1)
-
-        # ===== Define a string variable to toggle the text in Button_4. #***
-        self.button_4_text = StringVar()
-        self.button_4_text.set(BUTTON_4_TEXT)
+        # ===== Define a string variable to toggle the text in Button_4. # ***
+        self.button_3_text = tk.StringVar()
+        self.button_3_text.set(BUTTON_3_TEXT)
 
         # ===== Create styles for use with ttk widgets =====
         self.style = ttk.Style()
-        # Change a root style to modify all widgets.
-        self.style.configure('.', font=('FreeSans', 12))
 
-        # Create a Green style for the label is positive
+        # Create a Green style for the label when the On button is used
         self.style.configure('green.TLabel', foreground='black',
                              background='#00ff00', font=('FreeSans', 16),
                              padding=10)
-        # Create a Red style for the label is negative
+
+        # Create a Red style for the label when the Off button is used
         self.style.configure('red.TLabel', foreground='white',
                              background='#ff0000', font=('FreeSans', 16),
                              padding=10)  # borderwidth=10)
-        # Create a Blue style for the label is 0  #***
+
+        # Create a Blue style for the label is 0  # ***
         self.style.configure('blue.TLabel', foreground='white',
                              background='#0000ff', font=('FreeSans', 16),
                              padding=10)
 
-        # Create a Green style Button for Increment
-        self.style.configure('green.TButton', foreground='black',
-                             background='#00ff00', font=('FreeSans', 16),
-                             padding=10, focuscolor='#008800')
-        # Create a Red style Button for Decrement
-        self.style.configure('red.TButton', foreground='white',
-                             background='#ff0000', font=('FreeSans', 16),
-                             padding=10)  # borderwidth=10)
-
-        # Create a inc style for Increment button
+        # Create a inc style for Increment button  # ***
         self.style.configure('inc.TButton',
                              background='#004400',  # Dark Green background
                              foreground='#008800',  # Mid Green characters
@@ -121,7 +129,7 @@ class GUI_Application():
                        relief=[('pressed', 'sunken'),       # Also groove,
                                ('!pressed', 'raised')])     # flat and ridge
 
-        # Create a dec style for Decrement button
+        # Create a dec style for Decrement button  # ***
         self.style.configure('dec.TButton',
                              background='#440000',  # Dark Red background
                              foreground='#880000',  # Mid Red characters
@@ -139,93 +147,83 @@ class GUI_Application():
                                        ('!focus', 'red')],  # no effect?
                        relief=[('pressed', 'sunken'),       # Also groove,
                                ('!pressed', 'raised')])     # ridge flat
+
+        # Create more styles here...
+
         # ===== Create Widgets =====
         # Create Labels:
         # label_1 - Main label to display the status of the switches
-        self.label_1 = ttk.Label(master, text="")
-        # label_2 - Program description
-        self.label_2 = ttk.Label(master, text=INFO_1)
-        # label_3 - State the argument if one was passed.
-        self.label_3 = ttk.Label(master, text=('{} "{}".'
-                                               .format(INFO_2, argument)))
-        # label_4 - Python version number. Retrieved by calling function.
-        self.label_4 = ttk.Label(master, text=get_python_version())
+        self.label_1 = ttk.Label(self, text="")
 
         # Create Buttons:
         # Button Increment
-        self.button_1 = ttk.Button(master, text=BUTTON_1_TEXT,
-                                   command=self.button_1_callback,
-                                   style='inc.TButton')
+        self.button_1 = ttk.Button(self, text=BUTTON_1_TEXT,
+                                   style='inc.TButton',  # ***
+                                   command=self.button_1_callback)
         # Button Decrement
-        self.button_2 = ttk.Button(master, text=BUTTON_2_TEXT,
-                                   command=self.button_2_callback,
-                                   style='dec.TButton')
-        # Button to Close
-        self.button_3 = ttk.Button(master, text=BUTTON_3_TEXT,
+        self.button_2 = ttk.Button(self, text=BUTTON_2_TEXT,
+                                   style='dec.TButton',  # ***
+                                   command=self.button_2_callback)
+
+        # Button Enable/Disable Toggle # ***
+        self.button_3 = ttk.Button(self,
+                                   textvariable=self.button_3_text,  # ***
                                    command=self.button_3_callback)
-        # Button to toggle Enable / Disable using self.button_4_text variable
-        self.button_4 = ttk.Button(master, textvariable=self.button_4_text,
-                                   command=self.button_4_callback)
+
+        # Create more widgets here...
 
         # ===== Add widgets to grid =====
-        # Labels
-        self.label_1.grid(row=0, column=0, columnspan=3, padx=5, pady=5)
-        self.label_2.grid(row=2, column=0, columnspan=3, padx=5, pady=5,
-                          sticky=W)
-        self.label_3.grid(row=3, column=0, columnspan=3, padx=5, pady=5,
-                          sticky=W)
-        self.label_4.grid(row=4, column=0, columnspan=3, padx=5, pady=5,
-                          sticky=W)
+        self.label_1.grid(row=0, column=1, padx=5, pady=5)
+        self.button_1.grid(row=1, column=0, padx=10, pady=10)
+        self.button_2.grid(row=1, column=2, padx=10, pady=10)
+        self.button_3.grid(row=2, column=0, padx=10, pady=10)
 
-        # Buttons
-        self.button_1.grid(row=1, column=0, padx=10, pady=10, sticky=W)
-        self.button_2.grid(row=1, column=1, padx=10, pady=10)
-        self.button_3.grid(row=5, column=3, padx=10, pady=10)
-        self.button_4.grid(row=5, column=0, padx=10, pady=10)
-
-        # ===== Initial Setup =====
+    def action_on_launch(self, argument):
+        """Actions on initial launching of the application"""
         # Call function to perform initial setup of label_1
-        main_program_action(self.label_1, "")
-        # *** Invoke button 4 on lauching. This results in button 1&2 disabled.
-        self.button_4.invoke()
-        # ===== End of all widget creation and setup =====
+        # Pass the command line argument. E.g. "inc" or "dec" or ""
+        main_program_outside_GUI_class(self.label_1, argument)
+        # self.main_program_inside_GUI_class(argument)
+        # Invoke button 4 on lauching. This results in button 1&2 disabled.
+        self.button_3.invoke()  # ***
 
     # ===== Widget call backs =====
-    def button_1_callback(self):
-        """On Button - Call main program function """
-        main_program_action(self.label_1, "inc")
+    def button_1_callback(self):  # ***
+        """Increment Button - Call function for on off buttons"""
+        main_program_outside_GUI_class(self.label_1, "inc")
 
-    def button_2_callback(self):
-        """Off Button - Call main program function """
-        main_program_action(self.label_1, "dec")
+    def button_2_callback(self):  # ***
+        """Decrement Button - Call function for on off buttons"""
+        main_program_outside_GUI_class(self.label_1, "dec")
 
     def button_3_callback(self):
-        """Close the GUI application"""
-        sys.exit()
-
-    def button_4_callback(self):
         """Toggle button to Enable/Disable Buttons 1 & 2"""
-        # Use instate to return True/False status of flags of a widget. #***
+        # Use instate to return True/False status of flags of a widget. # ***
         # print(self.button_1.instate(['disabled']))  # ==> True/False
         if self.button_1.instate(['disabled']):
             self.set_buttons_enabled()
         else:
             self.set_buttons_disabled()
 
-    def set_buttons_disabled(self):
-        """Set disabled flag on buttons 1 & 2. Change label on button 4"""
+    def set_buttons_disabled(self):  # ***
+        """Set disabled flag on buttons 1 & 2. Change label on button 3"""
         self.button_1.state(['disabled'])
         self.button_2.state(['disabled'])
-        self.button_4_text.set("Enable")  # ***Toggle the button_4 text
+        self.button_3_text.set("Enable")  # Toggle textvariable button_3_text
 
-    def set_buttons_enabled(self):
-        """Set not disabled flag on buttons 1 & 2. Change label on button 4"""
+    def set_buttons_enabled(self):  # ***
+        """Set not disabled flag on buttons 1 & 2. Change label on button 3"""
         self.button_1.state(['!disabled'])
         self.button_2.state(['!disabled'])
-        self.button_4_text.set("Disable")  # ***Toggle the button_4 text
+        self.button_3_text.set("Disable")  # Toggle textvariable button_3_text
+
+    def main_program_inside_GUI_class(self, status):
+        """Calling to code in the loop saves having to pass widget info"""
+        pass
+    # ===== End of GUI Applications Class Feature section =====
 
 
-def main_program_action(label_1, status):
+def main_program_outside_GUI_class(label1, status):
     """
     This is the main section of program code. It has been placed outside of
     the GUI_Application() class.
@@ -240,32 +238,99 @@ def main_program_action(label_1, status):
         string = ("{0} squared = {1}, {0} cubed = {2}"
                   .format(argument_1, argument_1**2, argument_1**3))
         if argument_1 > 0:
-            label_1.config(text=string, style='green.TLabel')
+            label1.config(text=string, style='green.TLabel')
         elif argument_1 == 0:
-            label_1.config(text=string, style='blue.TLabel')
+            label1.config(text=string, style='blue.TLabel')
         else:
-            label_1.config(text=string, style='red.TLabel')
+            label1.config(text=string, style='red.TLabel')
 
     elif status == "dec":  # ***
         argument_1 -= 1
         string = ("{0} squared = {1}, {0} cubed = {2}"
                   .format(argument_1, argument_1**2, argument_1**3))
         if argument_1 > 0:
-            label_1.config(text=string, style='green.TLabel')
-        elif argument_1 == 0:
-            label_1.config(text=string, style='blue.TLabel')
+            label1.config(text=string, style='green.TLabel')
+        elif argument_1 == 0:  # ***
+            label1.config(text=string, style='blue.TLabel')
         else:
-            label_1.config(text=string, style='red.TLabel')
+            label1.config(text=string, style='red.TLabel')
 
     else:  # Don't increment or decrement. Use when launched.
         string = ("{0} squared = {1}, {0} cubed = {2}"
                   .format(argument_1, argument_1**2, argument_1**3))
         if argument_1 > 0:
-            label_1.config(text=string, style='green.TLabel')
-        elif argument_1 == 0:
-            label_1.config(text=string, style='blue.TLabel')
+            label1.config(text=string, style='green.TLabel')
+        elif argument_1 == 0:  # ***
+            label1.config(text=string, style='blue.TLabel')
         else:
-            label_1.config(text=string, style='red.TLabel')
+            label1.config(text=string, style='red.TLabel')
+
+
+class GUI_Application_Standard(ttk.Frame):
+    """Main GUI for the standard functionality"""
+
+    def __init__(self, parent, argument):
+        ttk.Frame.__init__(self, parent)
+        """
+        Initilization of GUI
+        self is objects in this class
+        parent is the root = tk.Tk
+        """
+        # self.parent = parent # <== not needed?
+        self.master.title(TITLE_1)
+        # print(dir(self)) # <== __init__ in tkinter?
+        # print(dir(parent)) # <== root = tk.TK
+        # print(dir(argument))
+        self.create_standard_widgets(argument)
+        # self.create_feature_widgets(argument)
+        # self.action_on_launch(argument)
+
+    def create_standard_widgets(self, argument):
+        """Setup the style, widgets and initial appearance on launching"""
+
+        # ===== Create styles for use with ttk widgets =====
+        self.style = ttk.Style()
+        # Change a root style to modify all widgets.
+        self.style.configure('.', font=('FreeSans', 12))
+
+        # ===== Create Widgets =====
+        # Create Labels:
+        # label_1 - Program description
+        self.label_1_standard = ttk.Label(self, text=INFO_1)
+        # label_2 - State the argument if one was passed.
+        if argument is None:
+            self.label_2_standard = ttk.Label(self, text=(INFO_2A))
+        else:
+            self.label_2_standard = ttk.Label(self, text=('{} "{}".'
+                                              .format(INFO_2B, argument)))
+        # label_3 - Python version number. Retrieved by calling function.
+        self.label_3_standard = ttk.Label(self, text=get_python_version())
+        # label_4 - Spare - Not used
+        self.label_4_standard = ttk.Label(self, text="")
+
+        # Create Buttons:
+        # Button to Close
+        self.button_1_standard = ttk.Button(self, text=CLOSE_TEXT,
+                                            command=self.button_1_standard_cb)
+
+        # ===== Add widgets to grid =====
+        # Labels
+        self.label_1_standard.grid(row=0, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        self.label_2_standard.grid(row=1, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        self.label_3_standard.grid(row=2, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        self.label_4_standard.grid(row=3, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        # Buttons
+        self.button_1_standard.grid(row=4, column=3, padx=10, pady=10,
+                                    sticky="e")
+        # ===== End of all standard widget creation and setup =====
+
+    def button_1_standard_cb(self):
+        """Callback from close button to close the GUI application"""
+        sys.exit()
 
 
 def get_python_version():
@@ -280,19 +345,22 @@ def get_python_version():
     python_version = sys.version.split(" ")[0]
     return "Python version: {}.".format(python_version)
 
+
 if __name__ == "__main__":
-    """Check for command line argument. Launch GUI"""
+    """Check for command line argument. Provide copying to bin. Launch GUI"""
+    print(TITLE_2)
     if len(sys.argv) > 1:
         argument_1 = sys.argv[1]
     else:
-        argument_1 = 0   # *** Changed from None to 0
+        argument_1 = 0
+
     # Provide help
     if argument_1 == "-h" or argument_1 == "--help":
         print("{} V{}. {}\n{}\n"
               "Use option --copy2bin create launchable program."
               .format(PROGRAM, VERSION, sys.argv[0], INFO_1))
         sys.exit()
-    # Provide copy to /usr/local/bin/
+
     if argument_1 == "--copy2bin":
         try:
             from copy2bin import copy_to_bin
@@ -303,174 +371,27 @@ if __name__ == "__main__":
             print("Place copy2bin.py into "
                   "/usr/local/lib/python3.4/dist-packages/")
             sys.exit()
+
+    # If there is an argument_1, and its not -h --help or --copy2bin then the
+    # argument will be passed to the GUI application.
     # Pass a value to launch program. Or 0 if no value.
     try:
         argument_1 = int(argument_1)
     except ValueError:
         # If not an integer then force to a value of 0
         argument_1 = 0
-
-    print(TITLE_2)
     # Launch tkinter GUI.
-    root = Tk()
+    root = tk.Tk()
+
     # Force the geometry of the GUI width x height + position x + position y
-    # root.geometry('400x180+50+100')
-    main_gui = GUI_Application(root, argument_1)
+    # root.geometry('1000x180+100+100')
+    # Open the two GUI Application class. Use grid to place in different rows
+    main_gui = GUI_Application_Standard(root, argument_1).grid(row=1, column=0)
+    main_gui = GUI_Application_Feature(root, argument_1).grid(row=0, column=0)
     root.mainloop()
 
 '''
 Notes:
-Changes from program_01a.py to program_01b.py
-
-#INFO_2A = "No command line argument was passed on launching." #***
-INFO_2B = "The command line argument value used: " #***
-BUTTON_1_TEXT = "Increment" #***
-BUTTON_2_TEXT = "Decrement" #***
-#ON_TEXT = "On" #***
-#OFF_TEXT = "Off" #***
-
-===
-#*** Add for 0 value
-self.style.configure('blue.TLabel', foreground='white',
-                     background='#0000ff', font=('FreeSans', 16),
-                     padding=10)
-===
-#if argument == None: #***
-#    self.label_3 = ttk.Label(master, text=(INFO_2A)) #***
-#else: #***
-self.label_3 = ttk.Label(master, text=('{} "{}".'
-                         .format(INFO_2B, argument)))
-
-===
-# Labels
-self.label_1.grid(row=0, column=0, columnspan=3, padx=5, pady=5) #***
-===
-# Call function to perform initial setup of label_1
-main_program_action(self.label_1, "")  #***
-
-===
-def button_1(self):
-    """On Button - Call main program function """
-    main_program_action(self.label_1, "inc") #***
-
-def button_2(self):
-    """Off Button - Call main program function """
-    main_program_action(self.label_1, "dec") #***
-
-===
-if status == "inc": #***
-elif status == "dec": #***
-===
-elif argument_1 == 0: #***
-    label_1.config(text=string, style='blue.TLabel')
-===
-
-===== =====
-Changes from program_01.py to program_01a.py
-===
-PROGRAM = "program_01a.py" #***
-===
-argument_1 = 0 #***  # For command line first argument (sys.argv[1]).
-===
-main_program_on_off_action(self.label_1, "on")  #*** Initial setup
-===
-    #*** New main program
-    global argument_1
-    if status == "on":
-        argument_1 +=1
-        string = ("{0} squared = {1}, {0} cubed = {2}"
-                .format(argument_1, argument_1**2, argument_1**3))
-        label_1.config(text=string, style='green.TLabel')
-
-    elif status == "off":
-        argument_1 -=1
-        string = ("{0} squared = {1}, {0} cubed = {2}"
-                .format(argument_1, argument_1**2, argument_1**3))
-
-        label_1.config(text=string, style='red.TLabel')
-    else:
-        label_1.config(text="", style='TLabel')
-
-===
-    #*** Modify Handling of command line input to check its an integer
-    if len(sys.argv) > 1:
-        argument_1 = sys.argv[1]
-        try: #*** Test if integer was supplied from the command line
-            argument_1 = int(argument_1)  #***
-        except ValueError:  #***
-            argument_1 = 0  #*** Was not an integer. Force to be integer of 0.
-    else:
-        argument_1 = 0  #*** Changed from None to 0
-
-===
-
-style = ttk.Style()
-print("TButton focus colour: {}"
-      .format(style.lookup('TButton', 'focuscolor')))
-print("TButton focus thickness: {}"
-      .format(style.lookup('TButton', 'focusthickness')))
-
-print("TLabel border borderwidth: {}"
-      .format(style.lookup('TLabel.border', 'borderwidth')))
-print("TLabel border borderwidth: {}"
-      .format(style.lookup('TLabel', 'borderwidth')))
-
-print("TButton border background: {}"
-      .format(style.lookup('TButton.border', 'background')))
-print("TButton label background: {}"
-      .format(style.lookup('TButton.label', 'background')))
-print("TButton label bordercolor: {}"
-      .format(style.lookup('TButton', 'bordercolor')))
-print("Button.highlight:\n{}".format(style.element_options('TButton.label')))
-print("Button.highlight:\n{}".format(style.map('TButton', 'label.background')))
-
-#print("Button.highlight:\n{}".format(ttk.Button.cget('ttk.Button','background')))
-#print(dir(ttk.Style.theme_names('*')))
-
-#print("Button.highlight:\n{}".format(ttk.Style.theme_names()))
-
-#sys.exit()
-
-=====
-http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-map.html
-
-active 	    The mouse is currently within the widget.
-alternate 	This state is reserved for application use.
-background 	Under Windows or MacOS, the widget is located in a window that is
-            not the foreground window.
-disabled 	The widget will not respond to user actions.
-focus 	    The widget currently has focus.
-invalid 	The contents of the widget are not currently valid.
-pressed 	The widget is currently being pressed (e.g., a button that is
-            being clicked).
-readonly 	The widget will not allow any user actions to change its current
-            value. For example, a read-only Entry widget will not allow
-            editing of its content.
-selected 	The widget is selected. Examples are checkbuttons and radiobuttons
-            that are in the 'on' state.
-
-=====
-
-The full list of  state flags available to themed widgets is: "active",
-"disabled", "focus", "pressed", "selected", "background", "readonly",
-"alternate", and "invalid". Not all states are meaningful for all widgets.
-It's also possible to get fancy in the "state" and "instate" methods and
-specify multiple state flags at the same time.
-
-button.instate(['disabled'])          # return true if the button is disabled,
-                                        else false
-button.instate(['!disabled'])         # return true if the button is not
-                                        disabled, else false
-button.instate(['!disabled'], cmd)    # execute 'cmd' if the button is not
-                                        disabled <-- cmd seems to always fire
-# A command can be included.
-self.button_1.instate(['disabled'], print(self.button_1.instate(['disabled'])))
-self.button_1.instate(['disabled'], print("Should only print when disabled"))
-
-
-Buttons take the same "text", "textvariable" (rarely used), "image" and
-"compound" configuration options as labels, which control whether the button
-displays text and/or an image.
 
 =====
 References:
@@ -480,6 +401,202 @@ https://www.tcl.tk/man/tcl8.5/TkCmd/contents.htm
 http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-element-layer.html
 http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-layouts.html
 http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-map.html
+
+=====
+Setup the program so it can be launched from the command line:
+Linux Instructions:
+Note: Requires first line to be the shebang. E.g. #!/usr/bin/env python3
+
+To convert a program so it can be run from the linux bash command line...
+Copy to /usr/local/bin/ stripping the ".py" extension. Renaming if desired.
+$ sudo cp python_file_name.py /usr/local/bin/program_name
+E.g. $ sudo cp python_octal_calculator_v3.py /usr/local/bin/octalcalc
+
+Set file to be executable.
+$ sudo chmod +x /usr/local/bin/program_name
+E.g. $ sudo chmod +x /usr/local/bin/octalcalc
+
+Launch the program.
+$ program_name
+E.g. $ octalcalc
+
+Example:
+$ sudo cp program_01.py /usr/local/bin/program1
+$ sudo chmod +x /usr/local/bin/program1
+$ ls -l /usr/local/bin/program1
+-rwxr-xr-x 1 root root 8702 Jan 27 10:50 /usr/local/bin/program1
+$ program1
+
+=====
+#Obtaining TLabel options...
+style = ttk.Style()
+print("TLabel layout:\n{}".format(style.layout('TLabel')))
+print("TLabel.border:\n{}".format(style.element_options('TLabel.border')))
+print("TLabel.padding:\n{}".format(style.element_options('TLabel.padding')))
+print("TLabel.label:\n{}".format(style.element_options('TLabel.label')))
+sys.exit()
+
+TLabel layout:
+[('Label.border', {'sticky': 'nswe', 'children':
+    [('Label.padding', {'sticky': 'nswe', 'children':
+        [('Label.label', {'sticky': 'nswe'})],
+    'border': '1'})],
+'border': '1'})]
+
+TLabel.border:
+('-background', '-borderwidth', '-relief')
+TLabel.padding:
+('-padding', '-relief', '-shiftrelief')
+TLabel.label:
+('-compound', '-space', '-text', '-font', '-foreground', '-underline',
+'-width', '-anchor', '-justify', '-wraplength', '-embossed', '-image',
+'-stipple', '-background')
+
+=====
+#Obtaining TButton options...
+style = ttk.Style()
+print("TButton layout:\n{}".format(style.layout('TButton')))
+print("TButton.border:\n{}".format(style.element_options('TButton.border')))
+print("TButton.focus:\n{}".format(style.element_options('TButton.focus')))
+print("TButton.padding:\n{}".format(style.element_options('TButton.padding')))
+print("TButton.label:\n{}".format(style.element_options('TButton.label')))
+sys.exit()
+
+TButton layout:
+[('Button.border', {'children':
+    [('Button.focus', {'children':
+        [('Button.padding', {'children':
+            [('Button.label', {'sticky': 'nswe'})],
+        'sticky': 'nswe'})],
+    'sticky': 'nswe'})],
+'sticky': 'nswe', 'border': '1'})]
+
+TButton.border:
+('-background', '-borderwidth', '-relief')
+TButton.focus:
+('-focuscolor', '-focusthickness')
+TButton.padding:
+('-padding', '-relief', '-shiftrelief')
+TButton.label:
+('-compound', '-space', '-text', '-font', '-foreground', '-underline',
+'-width', '-anchor', '-justify', '-wraplength', '-embossed', '-image',
+'-stipple', '-background')
+
+print("TButton focus: {}"
+      .format(style.lookup('TButton.focus', 'focuscolor')))
+
+=====
+Examples of performing a lookup on a style option.
+print("TLabel border background colour: {}"
+      .format(style.lookup('TLabel.border', 'background')))
+
+TLabel border background colour: #d9d9d9
+
+print("TLabel border borderwidth: {}"
+      .format(style.lookup('TLabel.border', 'borderwidth')))
+
+TLabel border borderwidth: 1
+
+=====
+    # ===== Main Program if it is included in the class GUI_Application() =====
+    def button_on_off_action(self, status):
+        """Change the message and colours"""
+        if status == "on":
+            self.label_1.config(text=ON_TEXT, style='green.TLabel')
+        elif status == "off":
+            self.label_1.config(text=OFF_TEXT, style='red.TLabel')
+        else:
+            self.label_1.config(text="", style='TLabel')
+
+=====
+http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-style-layer.html
+===
+Widget class	Style name
+Button 	        TButton
+Checkbutton     TCheckbutton
+Combobox 	    TCombobox
+Entry 	        TEntry
+Frame 	        TFrame
+Label 	        TLabel
+LabelFrame 	    TLabelFrame
+Menubutton 	    TMenubutton
+Notebook 	    TNotebook
+PanedWindow     TPanedwindow (not TPanedWindow!)
+Progressbar     Horizontal.TProgressbar or Vertical.TProgressbar,
+                    depending on the orient option.
+Radiobutton     TRadiobutton
+Scale 	        Horizontal.TScale or Vertical.TScale,
+                    depending on the orient option.
+Scrollbar 	    Horizontal.TScrollbar or Vertical.TScrollbar,
+                    depending on the orient option.
+Separator 	    TSeparator
+Sizegrip 	    TSizegrip
+Treeview 	    Treeview (not TTreview!)
+
+Ttk comes with 17 widgets, eleven of which already existed in tkinter:
+Button, Checkbutton, Entry, Frame, Label, LabelFrame, Menubutton, PanedWindow,
+Radiobutton, Scale and Scrollbar.
+The other six are new:
+Combobox, Notebook, Progressbar, Separator, Sizegrip and Treeview.
+
+* = tkinter widgets - not part of ttk widgets. Others to be investigated.
+BaseWidget,
+BitmapImage,
+*Canvas,
+Image,
+*Listbox (Use ttk Combobox)
+*Message,
+*OptionMenu?,
+PhotoImage,
+*Spinbox,
+Studbutton,
+*Text,
+Tributton,
+Widget,
+Wm,
+Xview
+
+
+
+LabelFrame and Labelframe seem to be the same. With ttk opt for First letter
+uppercase and remaining letter lowercase.
+
+>>> f = ttk.LabelFrame()
+>>> fClass = f.winfo_class()
+>>> fClass
+'TLabelframe'
+
+>>> f = ttk.Labelframe()
+>>> fClass = f.winfo_class()
+>>> fClass
+'TLabelframe'
+
+Same with PanedWindow and Panedwindow...
+
+>>> p = ttk.PanedWindow()
+>>> pClass = p.winfo_class()
+>>> pClass
+'TPanedwindow'
+>>> p = ttk.Panedwindow()
+>>> pClass = p.winfo_class()
+>>> pClass
+'TPanedwindow'
+>>>
+
+
+
+===
+print(sys.path)
+
+/home/ian/python_templates
+/usr/lib/python3.4
+/usr/lib/python3.4/plat-x86_64-linux-gnu
+/usr/lib/python3.4/lib-dynload
+/usr/local/lib/python3.4/dist-packages
+/usr/lib/python3/dist-packages
+
+
+===
 
          1         2         3         4         5         6         7        7
 1234567890123456789012345678901234567890123456789012345678901234567890123456789
