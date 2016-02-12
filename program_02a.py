@@ -166,11 +166,11 @@ class GUI_Application_Feature(ttk.Frame):
         # self.main_program_inside_GUI_class(argument)
 
     # ===== Widget call backs =====
-    def button_1_callback(self):  # ***
+    def button_1_callback(self):
         """Increment Button - Call function for on off buttons"""
         main_program_outside_GUI_class(self.label_1, "inc")
 
-    def button_2_callback(self):  # ***
+    def button_2_callback(self):
         """Decrement Button - Call function for on off buttons"""
         main_program_outside_GUI_class(self.label_1, "dec")
 
@@ -190,7 +190,7 @@ def main_program_outside_GUI_class(label1, status):
     """
     # Changed to increment and decrement a global variable integer
     global argument_1
-    if status == "inc":  # ***
+    if status == "inc":
         argument_1 += 1
         string = ("{0} squared = {1}, {0} cubed = {2}"
                   .format(argument_1, argument_1 ** 2, argument_1 ** 3))
@@ -201,7 +201,7 @@ def main_program_outside_GUI_class(label1, status):
         else:
             label1.config(text=string, style='red.TLabel')
 
-    elif status == "dec":  # ***
+    elif status == "dec":
         argument_1 -= 1
         string = ("{0} squared = {1}, {0} cubed = {2}"
                   .format(argument_1, argument_1 ** 2, argument_1 ** 3))
