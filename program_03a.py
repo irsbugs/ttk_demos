@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 #
-# Program:      program_03a.py
+# Program:      program_03b.py
 #
 # Objective:    GUI application template using buttons and labels
-#               Use same overall layout as program_01.py
-#               Introduce ttkRadioButton.
+#               Introduce ttkRadiobutton as arrays
 #               Command line option 1 sets the default values of Radiobuttons
 #
 # Written for:  Hamilton Python User Group - Presentation xxx 2016
@@ -13,7 +12,7 @@
 #
 # Author:       Ian Stewart
 #
-# Date:         2016-Feb-02
+# Date:         2016-Feb-12
 #
 # Copyright:    This work is licensed under a Creative Commons
 #               Attribution-ShareAlike 4.0 International License.
@@ -46,47 +45,47 @@ except ImportError as e:
     sys.exit()
 
 # Define Constants:
-PROGRAM = "program_03a.py"
-VERSION = "1.0"
+PROGRAM = "program_03b.py"
+VERSION = "2.0"
 TITLE_1 = "GUI Application. {} {}".format(PROGRAM, VERSION)
 TITLE_2 = "Launching tkinter/ttk application. {} {}".format(PROGRAM, VERSION)
-INFO_1 = ("Program to introduce the use of radiobutton arrays.\n"
+INFO_1 = ("Program to highlight use of radiobutton arrays.\n"
           "Option of 1 will launch with pre-selected radio buttons.")
 INFO_2 = "The command line argument was "
-RADIOBUTTON_1_TEXT = "Oranges"
-RADIOBUTTON_1_VALUE = "orange"
-RADIOBUTTON_2_TEXT = "Lemons"
-RADIOBUTTON_2_VALUE = "lemon"
-RADIOBUTTON_3_TEXT = "Grapes"
-RADIOBUTTON_3_VALUE = "grape"
-
-RADIOBUTTON_4_TEXT = "one"
-RADIOBUTTON_4_VALUE = 1
-RADIOBUTTON_5_TEXT = "two"
-RADIOBUTTON_5_VALUE = 2
-RADIOBUTTON_6_TEXT = "three"
-RADIOBUTTON_6_VALUE = 3
-
-RADIOBUTTON_7_TEXT = "pi"
-RADIOBUTTON_7_VALUE = 3.141592
-RADIOBUTTON_8_TEXT = "e"
-RADIOBUTTON_8_VALUE = 2.718281
-
 BUTTON_1_TEXT = "Submit"
 BUTTON_3_TEXT = "Close"
+CLOSE_TEXT = "Close"
 
 # Define Variables:
 argument_1 = 0  # For command line first argument (sys.argv[1]).
+# *** Radio button array data
+radiobutton_set_1_text = ["Oranges", "Lemons", "Grapes"]
+radiobutton_set_1_value = ["orange", "lemon", "grape"]
+
+radiobutton_set_2_text = ["One", "Two", "Three"]
+radiobutton_set_2_value = [1, 2, 3]
+
+radiobutton_set_3_text = ["Pi", "e"]
+radiobutton_set_3_value = [3.141592, 2.718281]
+
+# TODO: Combine the text and value data lists. E.g.
+# radiobutton_set_3_data = [["Pi", 3.141592], ["e", 2.718281]]
 
 # Main GUI application
 
 
-class GUI_Application():
+class GUI_Application_Feature(ttk.Frame):
+    """Main GUI for the featured functionality"""
 
-    def __init__(self, master, argument):
-        """Setup the style, widgets and initial appearance on launching"""
-        self.master = master
-        master.title(TITLE_1)
+    def __init__(self, parent, argument):
+        ttk.Frame.__init__(self, parent)
+
+        self.master.title(TITLE_1)
+        self.create_standard_widgets(argument)
+
+    def create_standard_widgets(self, argument):
+        """Setup variables, style, widgets for appearance on launching"""
+
         # *** Set String variable for Radiobutton set 1
         self.radiobutton_set_1 = StringVar()
         # *** Set Int variable for Radiobutton set 2
@@ -108,93 +107,86 @@ class GUI_Application():
         self.style.configure('cyan.TFrame', borderwidth=5, relief="ridge",
                              background='#00ffff')
 
+        # Radiobutton style
+        self.style.configure('red.TRadiobutton',
+                             foreground='#ff0000', background='#cccccc',
+                             indicatorcolor='#880000', indicatordiameter=20,
+                             indicatormargin=5, indicatorrelief='raised',
+                             borderwidth=3,
+                             focuscolor='#0000ff', focusthickness=5
+                             )
+        self.style.map('red.TRadiobutton',
+                       foreground=[('disabled', '#aaaaaa'),  # Light grey
+                                   ('pressed', '#008800'),  # Mid Green
+                                   ('active', '#00ff00')],  # Light Green
+                       background=[('disabled', '#cccccc'),  # Light Grey
+                                   ('pressed', '#00ff00'),  # Light Green
+                                   ('active', '#008800')],  # Mid Green
+                       highlightcolor=[('focus', 'green'),  # no effect?
+                                       ('!focus', 'red')],  # no effect?
+                       relief=[('pressed', 'sunken'),       # Also groove,
+                               ('!pressed', 'raised')])     # flat and ridge
+
         # ===== Create Widgets =====
         # Create Frames
         # Frame1. Relief = "sunken" "flat" "groove" "ridge" "raised"
-        self.frame_1 = ttk.Frame(master, style='cyan.TFrame',
+        self.frame_1 = ttk.Frame(self, style='cyan.TFrame',
                                  padding="5 5 5 5")
 
         # Create Labels:
         # label_1 - Main label to display the status of the switches
         self.label_1 = ttk.Label(self.frame_1, text="", style='blue.TLabel')
         # Add label_1 into frame_1
-        self.label_1.grid(row=0, column=0, sticky="WE")
+        self.label_1.grid(row=0, column=0, sticky="we")
 
-        # Create Radiobuttons:
-        # Radiobutton_1 - Set 1
-        self.radiobutton_1 = ttk.Radiobutton(master,
-                                             text=RADIOBUTTON_1_TEXT,
-                                             variable=self.radiobutton_set_1,
-                                             value=RADIOBUTTON_1_VALUE,
-                                             command=self.radiobutton_1_cb)
-        # Radiobutton_2
-        self.radiobutton_2 = ttk.Radiobutton(master,
-                                             text=RADIOBUTTON_2_TEXT,
-                                             variable=self.radiobutton_set_1,
-                                             value=RADIOBUTTON_2_VALUE,
-                                             command=self.radiobutton_1_cb)
+        # Create Radiobutton array sets: #***
+        self.radiobutton_array_1 = []
+        for i in range(len(radiobutton_set_1_text)):
+            self.radiobutton_array_1.append(ttk.Radiobutton(
+                                            self,
+                                            text=radiobutton_set_1_text[i],
+                                            value=radiobutton_set_1_value[i],
+                                            variable=self.radiobutton_set_1,
+                                            command=self.radiobutton_1_cb,
+                                            style='red.TRadiobutton'))
 
-        # Radiobutton_3
-        self.radiobutton_3 = ttk.Radiobutton(master,
-                                             text=RADIOBUTTON_3_TEXT,
-                                             variable=self.radiobutton_set_1,
-                                             value=RADIOBUTTON_3_VALUE,
-                                             command=self.radiobutton_1_cb)
+        self.radiobutton_array_2 = []
+        for i in range(len(radiobutton_set_2_text)):
+            self.radiobutton_array_2.append(ttk.Radiobutton(
+                                            self,
+                                            text=radiobutton_set_2_text[i],
+                                            value=radiobutton_set_2_value[i],
+                                            variable=self.radiobutton_set_2,
+                                            command=self.radiobutton_2_cb))
 
-        # Radiobutton_4 - Set 2
-        self.radiobutton_4 = ttk.Radiobutton(master,
-                                             text=RADIOBUTTON_4_TEXT,
-                                             variable=self.radiobutton_set_2,
-                                             value=RADIOBUTTON_4_VALUE,
-                                             command=self.radiobutton_2_cb)
-        # Radiobutton_5
-        self.radiobutton_5 = ttk.Radiobutton(master,
-                                             text=RADIOBUTTON_5_TEXT,
-                                             variable=self.radiobutton_set_2,
-                                             value=RADIOBUTTON_5_VALUE,
-                                             command=self.radiobutton_2_cb)
-
-        # Radiobutton_6
-        self.radiobutton_6 = ttk.Radiobutton(master,
-                                             text=RADIOBUTTON_6_TEXT,
-                                             variable=self.radiobutton_set_2,
-                                             value=RADIOBUTTON_6_VALUE,
-                                             command=self.radiobutton_2_cb)
-        # Radiobutton_7
-        self.radiobutton_7 = ttk.Radiobutton(master,
-                                             text=RADIOBUTTON_7_TEXT,
-                                             variable=self.radiobutton_set_3,
-                                             value=RADIOBUTTON_7_VALUE,
-                                             command=self.radiobutton_3_cb)
-
-        # Radiobutton_8
-        self.radiobutton_8 = ttk.Radiobutton(master,
-                                             text=RADIOBUTTON_8_TEXT,
-                                             variable=self.radiobutton_set_3,
-                                             value=RADIOBUTTON_8_VALUE,
-                                             command=self.radiobutton_3_cb)
+        self.radiobutton_array_3 = []
+        for i in range(len(radiobutton_set_3_text)):
+            self.radiobutton_array_3.append(ttk.Radiobutton(
+                                            self,
+                                            text=radiobutton_set_3_text[i],
+                                            value=radiobutton_set_3_value[i],
+                                            variable=self.radiobutton_set_3,
+                                            command=self.radiobutton_3_cb))
 
         # Button_1 Submit the data
-        self.button_1 = ttk.Button(master, text=BUTTON_1_TEXT,
+        self.button_1 = ttk.Button(self, text=BUTTON_1_TEXT,
                                    command=self.button_1_cb)
-        # Button_3 to Close
-        self.button_3 = ttk.Button(master, text=BUTTON_3_TEXT,
-                                   command=self.button_3_cb)
 
         # ===== Add frames to main grid =====
-        # ***
-        self.radiobutton_1.grid(row=1, column=0, padx=10, pady=5, sticky=W)
-        self.radiobutton_2.grid(row=1, column=1, padx=10, pady=5, sticky=W)
-        self.radiobutton_3.grid(row=1, column=2, padx=10, pady=5, sticky=W)
-        self.radiobutton_4.grid(row=2, column=0, padx=10, pady=5, sticky=W)
-        self.radiobutton_5.grid(row=2, column=1, padx=10, pady=5, sticky=W)
-        self.radiobutton_6.grid(row=2, column=2, padx=10, pady=5, sticky=W)
-        self.radiobutton_7.grid(row=3, column=0, padx=10, pady=5, sticky=W)
-        self.radiobutton_8.grid(row=3, column=1, padx=10, pady=5, sticky=W)
+        # Add items from radiobutton arrays  # ***
+        # iterate through the array
+        for i in range(len(self.radiobutton_array_1)):
+            self.radiobutton_array_1[i].grid(row=1, column=i, padx=10, pady=5,
+                                             sticky=W)
+        for i in range(len(self.radiobutton_array_2)):
+            self.radiobutton_array_2[i].grid(row=2, column=i, padx=10, pady=5,
+                                             sticky=W)
+        for i in range(len(self.radiobutton_array_3)):
+            self.radiobutton_array_3[i].grid(row=3, column=i, padx=10, pady=5,
+                                             sticky=W)
 
         self.frame_1.grid(row=0, column=0, columnspan=3, padx=5, pady=5)
-        self.button_1.grid(row=4, column=0, padx=5, pady=5, sticky=W)
-        self.button_3.grid(row=4, column=2, padx=5, pady=5, sticky=E)
+        self.button_1.grid(row=4, column=2, padx=5, pady=5, sticky="e")
 
         # ===== Initial Setup =====
         # Perform initial setup of radiobuttons and invoke submit.
@@ -228,10 +220,6 @@ class GUI_Application():
                             self.radiobutton_set_2.get(),
                             self.radiobutton_set_3.get()))
 
-    def button_3_cb(self):
-        """Close the GUI application"""
-        sys.exit()
-
 
 def main_program_action(label_1):
     """
@@ -245,6 +233,86 @@ def main_program_action(label_1):
                                              self.radiobutton_set_2.get()))
 
 
+class GUI_Application_Standard(ttk.Frame):
+
+    """Main GUI for the standard functionality"""
+
+    def __init__(self, parent, argument):
+        ttk.Frame.__init__(self, parent)
+        """
+        Initilization of GUI
+        self is objects in this class
+        parent is the root = tk.Tk
+        """
+        # self.parent = parent # <== not needed?
+        self.master.title(TITLE_1)
+        # print(dir(self)) # <== __init__ in tkinter?
+        # print(dir(self)) # <== root = tk.TK
+        # print(self._name)  # 140269651526656
+        # print(dir(argument))
+        self.create_standard_widgets(argument)
+        # self.create_feature_widgets(argument)
+        # self.action_on_launch(argument)
+
+    def create_standard_widgets(self, argument):
+        """Setup the style, widgets and initial appearance on launching"""
+
+        # ===== Create styles for use with ttk widgets =====
+        self.style = ttk.Style()
+        # Change a root style to modify all widgets.
+        self.style.configure('.', font=('FreeSans', 12))
+
+        # ===== Create Widgets =====
+        # Create Frame1 to place around labesl and close buttons  # ***
+        self.frame_1 = ttk.Frame(self, padding="10 10 10 10", borderwidth=5,
+                                 relief="ridge")
+        # Frame within a frame for a close button  # ***
+        self.frame_2 = ttk.Frame(self.frame_1,
+                                 padding="10 10 10 10", borderwidth=5,
+                                 relief="ridge")
+
+        # Create Labels:
+        # label_1 - Program description
+        self.label_1_standard = ttk.Label(self.frame_1, text=INFO_1)
+        # label_2 - State the argument if one was passed.
+        self.label_2_standard = ttk.Label(self.frame_1,
+                                          text=('{} "{}".'.format(INFO_2,
+                                                                  argument)))
+        # label_3 - Python version number. Retrieved by calling function.
+        self.label_3_standard = ttk.Label(self.frame_1,
+                                          text=get_python_version())
+
+        # Create Buttons:
+        # Button to Close
+        self.button_1_standard = ttk.Button(self.frame_2, text=CLOSE_TEXT,
+                                            command=self.button_1_standard_cb)
+
+        # ===== Add widgets to grid =====
+        # Labels
+        self.label_1_standard.grid(row=0, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        self.label_2_standard.grid(row=1, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        self.label_3_standard.grid(row=2, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        # Buttons
+        # Add Close Button into its own frame, frame2
+        self.button_1_standard.grid(row=0, column=0)
+
+        # Frames
+        # Add frame2 (with button) into frame1  # ***
+        self.frame_2.grid(row=3, column=2, sticky="e")
+
+        # Add master frame1 to the main ttk.frame at bottom  # ***
+        self.frame_1.grid(row=1, column=0)
+
+        # ===== End of all standard widget creation and setup =====
+
+    def button_1_standard_cb(self):
+        """Callback from close button to close the GUI application"""
+        sys.exit()
+
+
 def get_python_version():
     """
     Function to retrieve the python version.
@@ -256,6 +324,7 @@ def get_python_version():
     """
     python_version = sys.version.split(" ")[0]
     return "Python version: {}.".format(python_version)
+
 
 if __name__ == "__main__":
     """Check for command line argument. Launch GUI"""
@@ -292,7 +361,10 @@ if __name__ == "__main__":
     root = Tk()
     # Force the geometry of the GUI width x height + position x + position y
     # root.geometry('400x180+50+100')
-    main_gui = GUI_Application(root, argument_1)
+    # Open the two GUI Application class. Use grid to place in different rows
+    main_gui = GUI_Application_Feature(root, argument_1).grid(row=0, column=0)
+    main_gui = GUI_Application_Standard(root, argument_1).grid(row=1, column=0)
+
     root.mainloop()  # Tells Tk to enter its event loop.
 
 """
