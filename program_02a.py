@@ -2,8 +2,16 @@
 #
 # Program:      program_02a.py
 #
-# Objective:    GUI application template using buttons, labels and frames
-#               Use the program_01c.py and introduce the ttk.Frame
+# Objective:    GUI application template.
+#               Standard GUI provides labels and a button
+#               Create master frame for Standard GUI
+#               Place Close button in a frame
+#               Place labels and the Close buttons frame in the master frame
+#               Feature GUI - Inc / Dec buttons and styled label
+#               Create master frame for Feature GUI
+#               Add a style for the label frame
+#               Add buttons and label frames inside master frame.
+#
 #
 # Written for:  Hamilton Python User Group - Presentation xxx 2016
 #               https://github.com/hampug
@@ -11,15 +19,15 @@
 #
 # Author:       Ian Stewart
 #
-# Date:         2016-Feb-01
+# Date:         2016-Feb-12
 #
 # Copyright:    This work is licensed under a Creative Commons
 #               Attribution-ShareAlike 4.0 International License.
 #               http://creativecommons.org/licenses/by-sa/4.0/
 #
 # Notes:
-# 1. Indentation method: 4 x space characters per indentation.
-# 2. #*** indicates a change from previous program.
+# 1. Indentation method: 4 x space characters per indentation
+# 2. # *** indicates a changes from previous revision
 #
 # Python modules to be imported. Plus checking
 import sys
@@ -32,153 +40,147 @@ if int(sys.version[0]) < 3:
     sys.exit()
 # Import tkinter and ttk modules
 try:
-    from tkinter import *
+    import tkinter as tk
 except ImportError as e:
-    print("Import Error: tkinter module for python3 is not available.")
-    print("To install tikinter: $ sudo apt-get install python3-tk")
+    print("Import Error: {}".format(e))
+    print("tkinter module for python3 is not available.")
+    print("To install tkinter: $ sudo apt-get install python3-tk")
     sys.exit()
 try:
     from tkinter import ttk
 except ImportError as e:
+    print("Import Error: {}".format(e))
     print("Import Error: tkinter.ttk module is not available.")
-    print("To install tikinter: $ sudo apt-get install python3-tk")
+    print("To install tkinter: $ sudo apt-get install python3-tk")
     sys.exit()
 
-# Define Constants:
+# from tkinter import constants as C
+
+# Define Constants - Standard Section:
 PROGRAM = "program_02a.py"
-VERSION = "1.0"
+VERSION = "2.0"
 TITLE_1 = "GUI Application. {} {}".format(PROGRAM, VERSION)
 TITLE_2 = "Launching tkinter/ttk application. {} {}".format(PROGRAM, VERSION)
-INFO_1 = "Program to highlight ttk.Frame."
-INFO_2 = "The command line argument was "
-BUTTON_1_TEXT = "Increment"
-BUTTON_2_TEXT = "Decrement"
-BUTTON_3_TEXT = "Close"
+INFO_1 = "Program to display squares and cubes. Style the frames"  # ***
+INFO_2A = "No command line argument was passed on launching."
+INFO_2B = "The command line argument was "
+CLOSE_TEXT = "Close"
 
-# Define Variables:
+# Define Variables - Standard and Feature Section:
 argument_1 = 0  # For command line first argument (sys.argv[1]).
 
+# Define Constants - Feature Section:
+BUTTON_1_TEXT = "Increment"
+BUTTON_2_TEXT = "Decrement"
+
+
 # Main GUI application
+class GUI_Application_Feature(ttk.Frame):
 
+    def __init__(self, parent, argument):
+        ttk.Frame.__init__(self, parent)
+        """
+        Initilization of GUI to feature more widgets
+        """
+        # self.parent = parent # <== not needed?
+        self.create_feature_widgets(argument)
+        self.action_on_launch(argument)
 
-class GUI_Application():
-
-    def __init__(self, master, argument):
-        """Setup the style, widgets and initial appearance on launching"""
-        self.master = master
-        master.title(TITLE_1)
+    # ===== Start for Feature Section =====
+    def create_feature_widgets(self, argument):
 
         # ===== Create styles for use with ttk widgets =====
         self.style = ttk.Style()
 
-        # Change a root style to modify all widgets.
-        self.style.configure('.', font=('FreeSans', 12))
-
-        # Create a Blue style for the label. Use when value 0
-        self.style.configure('blue.TLabel', foreground='white',
-                             background='#0000ff', font=('FreeSans', 16),
-                             padding=10)
-        # Create a Green style for the label. Use when value is minus.
+        # Create a Green style for the label when the On button is used
         self.style.configure('green.TLabel', foreground='black',
                              background='#00ff00', font=('FreeSans', 16),
                              padding=10)
-        # Create a Red style for the label. Use when value plus.
+
+        # Create a Red style for the label when the Off button is used
         self.style.configure('red.TLabel', foreground='white',
                              background='#ff0000', font=('FreeSans', 16),
-                             borderwidth=10)
-        self.style.configure('small.TLabel', font=('FreeSans', 10))
+                             padding=10)  # borderwidth=10)
+
+        # Create a Blue style for the label is 0
+        self.style.configure('blue.TLabel', foreground='white',
+                             background='#0000ff', font=('FreeSans', 16),
+                             padding=10)
+
         # Create a Frame style
         self.style.configure('cyan.TFrame', borderwidth=5, relief="ridge",
                              background='#00ffff')
 
+        # Create more styles here...
+
         # ===== Create Widgets =====
-        # Create Frames #***
-        # Frame1. Relief = "sunken" "flat" "groove" "ridge" "raised"
-        self.frame_1 = ttk.Frame(master, style='cyan.TFrame',
+        # Create Frames  Relief = "sunken" "flat" "groove" "ridge" "raised"
+        # Frame1. Master top frame inside ttk.Frame  # ***
+        self.frame_1 = ttk.Frame(self, padding="5 5 5 5",  borderwidth=5,
+                                 relief="ridge")
+
+        # Create frames to go inside Frame_1  # ***
+        # Frame2. Use a style
+        self.frame_2 = ttk.Frame(self.frame_1, style='cyan.TFrame',
                                  padding="5 5 5 5")
 
-        # Frame2
-        self.frame_2 = ttk.Frame(master, padding="10 10 10 10", borderwidth=5,
-                                 relief="ridge")
-        # Frame3
-        self.frame_3 = ttk.Frame(master, padding="10 10 10 10", borderwidth=5,
-                                 relief="ridge")
-        # Frame4
-        self.frame_4 = ttk.Frame(master, padding="10 10 10 10", borderwidth=5,
-                                 relief="groove")
+        # Frame3.  # ***
+        self.frame_3 = ttk.Frame(self.frame_1, padding="10 10 10 10",
+                                 borderwidth=5, relief="ridge")
+        # Frame4.  # ***
+        self.frame_4 = ttk.Frame(self.frame_1, padding="10 10 10 10",
+                                 borderwidth=5, relief="ridge")
 
         # Create Labels:
         # label_1 - Main label to display the status of the switches
-        self.label_1 = ttk.Label(self.frame_1, text="")
-        # Add label_1 into frame_1
-        self.label_1.grid(row=0, column=0)  # , padx=5, pady=5) #, sticky=W)
-
-        # label_2 - Program description
-        self.label_2 = ttk.Label(self.frame_4, text=INFO_1)
-        # label_3 - State the argument if one was passed.
-        self.label_3 = ttk.Label(self.frame_4,
-                                 text=('{} "{}".'.format(INFO_2, argument)))
-        # label_4 - Python version number. Retrieved by calling function.
-        self.label_4 = ttk.Label(self.frame_4, text=get_python_version())
-
-        # Add label_2 to_4 into frame_4
-        self.label_2.grid(row=0, column=0, columnspan=3, padx=5, pady=5,
-                          sticky=W)
-        self.label_3.grid(row=1, column=0, columnspan=3, padx=5, pady=5,
-                          sticky=W)
-        self.label_4.grid(row=2, column=0, columnspan=3, padx=5, pady=5,
-                          sticky=W)
-
-        # label_5 - Message for Close button
-        self.label_5 = ttk.Label(self.frame_3, text="Close Application",
-                                 style='small.TLabel')
-        # Add label_5 to frame 3
-        self.label_5.grid(row=0, column=0, padx=5, pady=5)
+        self.label_1 = ttk.Label(self.frame_2, text="")
 
         # Create Buttons:
-        # Button_1 Increment
-        self.button_1 = ttk.Button(self.frame_2, text=BUTTON_1_TEXT,
+        # Button Increment
+        self.button_1 = ttk.Button(self.frame_3, text=BUTTON_1_TEXT,
                                    command=self.button_1_callback)
-        # Button_2 Decrement
-        self.button_2 = ttk.Button(self.frame_2, text=BUTTON_2_TEXT,
+        # Button Decrement
+        self.button_2 = ttk.Button(self.frame_4, text=BUTTON_2_TEXT,
                                    command=self.button_2_callback)
-        # Add button_1 and _2 to frame_2
-        self.button_1.grid(row=0, column=0, padx=5, pady=5)
-        self.button_2.grid(row=0, column=1, padx=5, pady=5)
 
-        # Button_3 to Close
-        self.button_3 = ttk.Button(self.frame_3, text=BUTTON_3_TEXT,
-                                   command=self.button_3_callback)
-        # Add button_3 to frame_3
-        self.button_3.grid(row=1, column=0, padx=5, pady=5)
+        # Create more widgets here...
 
-        # ===== Add frames to main 3 x 3 grid ===== #***
-        self.frame_1.grid(row=0, column=0, columnspan=3)  # , sticky="WE")
-        self.frame_2.grid(row=1, column=0, columnspan=2)  # , sticky="NS")
-        self.frame_3.grid(row=1, column=2, columnspan=1)  # , sticky=E)
-        self.frame_4.grid(row=2, column=0, columnspan=3)
+        # ===== Add widgets to grids in the frames =====  # ***
+        self.label_1.grid(row=0, column=0, padx=5, pady=5)
+        self.button_1.grid(row=0, column=0, padx=10, pady=10)
+        self.button_2.grid(row=0, column=0, padx=10, pady=10)
 
-        # ===== Initial Setup =====
+        # Add the frames to the grid in the master frame  # ***
+        self.frame_2.grid(row=0, column=0, columnspan=3, padx=5, pady=5)
+        self.frame_3.grid(row=1, column=0, padx=5, pady=5)
+        self.frame_4.grid(row=1, column=2, padx=5, pady=5)
+
+        # Place Features master frame at top of ttk.frame  # ***
+        self.frame_1.grid(row=0, column=0)
+
+    def action_on_launch(self, argument):
+        """Actions on initial launching of the application"""
         # Call function to perform initial setup of label_1
-        main_program_action(self.label_1, "")
-
-        # ===== End of all widget creation and setup =====
+        # Pass the command line argument. E.g. "inc" or "dec" or ""
+        main_program_outside_GUI_class(self.label_1, argument)
+        # self.main_program_inside_GUI_class(argument)
 
     # ===== Widget call backs =====
-    def button_1_callback(self):
-        """Increment Button - Call function main_program"""
-        main_program_action(self.label_1, "inc")
+    def button_1_callback(self):  # ***
+        """Increment Button - Call function for on off buttons"""
+        main_program_outside_GUI_class(self.label_1, "inc")
 
-    def button_2_callback(self):
-        """Decrement Button - Call function main_program"""
-        main_program_action(self.label_1, "dec")
+    def button_2_callback(self):  # ***
+        """Decrement Button - Call function for on off buttons"""
+        main_program_outside_GUI_class(self.label_1, "dec")
 
-    def button_3_callback(self):
-        """Close the GUI application"""
-        sys.exit()
+    def main_program_inside_GUI_class(self, status):
+        """Calling to code in the loop saves having to pass widget info"""
+        pass
+    # ===== End of GUI Applications Class Feature section =====
 
 
-def main_program_action(label_1, status):
+def main_program_outside_GUI_class(label1, status):
     """
     This is the main section of program code. It has been placed outside of
     the GUI_Application() class.
@@ -188,37 +190,125 @@ def main_program_action(label_1, status):
     """
     # Changed to increment and decrement a global variable integer
     global argument_1
-    if status == "inc":
+    if status == "inc":  # ***
         argument_1 += 1
         string = ("{0} squared = {1}, {0} cubed = {2}"
-                  .format(argument_1, argument_1**2, argument_1**3))
+                  .format(argument_1, argument_1 ** 2, argument_1 ** 3))
         if argument_1 > 0:
-            label_1.config(text=string, style='green.TLabel')
+            label1.config(text=string, style='green.TLabel')
         elif argument_1 == 0:
-            label_1.config(text=string, style='blue.TLabel')
+            label1.config(text=string, style='blue.TLabel')
         else:
-            label_1.config(text=string, style='red.TLabel')
+            label1.config(text=string, style='red.TLabel')
 
-    elif status == "dec":
+    elif status == "dec":  # ***
         argument_1 -= 1
         string = ("{0} squared = {1}, {0} cubed = {2}"
-                  .format(argument_1, argument_1**2, argument_1**3))
+                  .format(argument_1, argument_1 ** 2, argument_1 ** 3))
         if argument_1 > 0:
-            label_1.config(text=string, style='green.TLabel')
-        elif argument_1 == 0:
-            label_1.config(text=string, style='blue.TLabel')
+            label1.config(text=string, style='green.TLabel')
+        elif argument_1 == 0:  # ***
+            label1.config(text=string, style='blue.TLabel')
         else:
-            label_1.config(text=string, style='red.TLabel')
+            label1.config(text=string, style='red.TLabel')
 
     else:  # Don't increment or decrement. Use when launched.
         string = ("{0} squared = {1}, {0} cubed = {2}"
-                  .format(argument_1, argument_1**2, argument_1**3))
+                  .format(argument_1, argument_1 ** 2, argument_1 ** 3))
         if argument_1 > 0:
-            label_1.config(text=string, style='green.TLabel')
-        elif argument_1 == 0:
-            label_1.config(text=string, style='blue.TLabel')
+            label1.config(text=string, style='green.TLabel')
+        elif argument_1 == 0:  # ***
+            label1.config(text=string, style='blue.TLabel')
         else:
-            label_1.config(text=string, style='red.TLabel')
+            label1.config(text=string, style='red.TLabel')
+
+
+class GUI_Application_Standard(ttk.Frame):
+
+    """Main GUI for the standard functionality"""
+
+    def __init__(self, parent, argument):
+        ttk.Frame.__init__(self, parent)
+        """
+        Initilization of GUI
+        self is objects in this class
+        parent is the root = tk.Tk
+        """
+        # self.parent = parent # <== not needed?
+        self.master.title(TITLE_1)
+        # print(dir(self)) # <== __init__ in tkinter?
+        # print(dir(self)) # <== root = tk.TK
+        # print(self._name)  # 140269651526656
+        # print(dir(argument))
+        self.create_standard_widgets(argument)
+        # self.create_feature_widgets(argument)
+        # self.action_on_launch(argument)
+
+    def create_standard_widgets(self, argument):
+        """Setup the style, widgets and initial appearance on launching"""
+
+        # ===== Create styles for use with ttk widgets =====
+        self.style = ttk.Style()
+        # Change a root style to modify all widgets.
+        self.style.configure('.', font=('FreeSans', 12))
+
+        # ===== Create Widgets =====
+        # Create Frame1 to place around labesl and close buttons  # ***
+        self.frame_1 = ttk.Frame(self, padding="10 10 10 10", borderwidth=5,
+                                 relief="ridge")
+        # Frame within a frame for a close button  # ***
+        self.frame_2 = ttk.Frame(self.frame_1,
+                                 padding="10 10 10 10", borderwidth=5,
+                                 relief="ridge")
+
+        # Create Labels:
+        # label_1 - Program description
+        self.label_1_standard = ttk.Label(self.frame_1, text=INFO_1)
+        # label_2 - State the argument if one was passed.
+        if argument is None:
+            self.label_2_standard = ttk.Label(self.frame_1, text=(INFO_2A))
+        else:
+            self.label_2_standard = ttk.Label(self.frame_1,
+                                              text=('{} "{}".'.format(
+                                                    INFO_2B, argument)))
+        # label_3 - Python version number. Retrieved by calling function.
+        self.label_3_standard = ttk.Label(self.frame_1,
+                                          text=get_python_version())
+        # label_4 - Spare - Not used
+        self.label_4_standard = ttk.Label(self.frame_1, text="")
+
+        # Create Buttons:
+        # Button to Close
+        self.button_1_standard = ttk.Button(self.frame_2, text=CLOSE_TEXT,
+                                            command=self.button_1_standard_cb)
+
+        # ===== Add widgets to grid =====
+        # Labels
+        self.label_1_standard.grid(row=0, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        self.label_2_standard.grid(row=1, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        self.label_3_standard.grid(row=2, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        self.label_4_standard.grid(row=3, column=0, columnspan=3, padx=5,
+                                   pady=5, sticky="w")
+        # Buttons
+        # Add Close Button into its own frame, frame2
+        self.button_1_standard.grid(row=0, column=0, padx=10, pady=10,
+                                    sticky="e")
+
+        # Frames
+        # Add frame2 (with button) into frame1  # ***
+        self.frame_2.grid(row=4, column=2, columnspan=1, padx=5, pady=5)
+
+        # Add master frame1 to the main ttk.frame at bottom  # ***
+        self.frame_1.grid(row=1, column=0)
+
+        # ===== End of all standard widget creation and setup =====
+
+    def button_1_standard_cb(self):
+        """Callback from close button to close the GUI application"""
+        sys.exit()
 
 
 def get_python_version():
@@ -233,19 +323,22 @@ def get_python_version():
     python_version = sys.version.split(" ")[0]
     return "Python version: {}.".format(python_version)
 
+
 if __name__ == "__main__":
-    """Check for command line argument. Launch GUI"""
+    """Check for command line argument. Provide copying to bin. Launch GUI"""
+    print(TITLE_2)
     if len(sys.argv) > 1:
         argument_1 = sys.argv[1]
     else:
         argument_1 = 0
+
     # Provide help
     if argument_1 == "-h" or argument_1 == "--help":
         print("{} V{}. {}\n{}\n"
               "Use option --copy2bin create launchable program."
               .format(PROGRAM, VERSION, sys.argv[0], INFO_1))
         sys.exit()
-    # Provide copy to /usr/local/bin/
+
     if argument_1 == "--copy2bin":
         try:
             from copy2bin import copy_to_bin
@@ -256,22 +349,26 @@ if __name__ == "__main__":
             print("Place copy2bin.py into "
                   "/usr/local/lib/python3.4/dist-packages/")
             sys.exit()
+
+    # If there is an argument_1, and its not -h --help or --copy2bin then the
+    # argument will be passed to the GUI application.
     # Pass a value to launch program. Or 0 if no value.
     try:
         argument_1 = int(argument_1)
     except ValueError:
         # If not an integer then force to a value of 0
         argument_1 = 0
-
-    print(TITLE_2)
     # Launch tkinter GUI.
-    root = Tk()
-    # Force the geometry of the GUI width x height + position x + position y
-    # root.geometry('400x180+50+100')
-    main_gui = GUI_Application(root, argument_1)
-    root.mainloop()  # Tells Tk to enter its event loop.
+    root = tk.Tk()
 
-"""
+    # Force the geometry of the GUI width x height + position x + position y
+    # root.geometry('1000x180+100+100')
+    # Open the two GUI Application class. Use grid to place in different rows
+    main_gui = GUI_Application_Standard(root, argument_1).grid(row=1, column=0)
+    main_gui = GUI_Application_Feature(root, argument_1).grid(row=0, column=0)
+    root.mainloop()
+
+'''
 Notes:
 
 =====
@@ -316,15 +413,6 @@ print("TLabel.border:\n{}".format(style.element_options('TLabel.border')))
 print("TLabel.padding:\n{}".format(style.element_options('TLabel.padding')))
 print("TLabel.label:\n{}".format(style.element_options('TLabel.label')))
 sys.exit()
-
-        # Obtain information of TWidgets layout and element_options, etc
-        # print("TButton layout:\n{}".format(self.style.layout('TButton')))
-        # print("TFrame layout:\n{}".format(self.style.layout('TFrame')))
-        # [('Frame.border', {'sticky': 'nswe'})]
-        # Frame.border
-        # print("TFrame.border:\n{}"
-        #      .format(self.style.element_options('TFrame.border')))
-        # ('-background', '-borderwidth', '-relief')
 
 TLabel layout:
 [('Label.border', {'sticky': 'nswe', 'children':
@@ -372,6 +460,9 @@ TButton.label:
 '-width', '-anchor', '-justify', '-wraplength', '-embossed', '-image',
 '-stipple', '-background')
 
+print("TButton focus: {}"
+      .format(style.lookup('TButton.focus', 'focuscolor')))
+
 =====
 Examples of performing a lookup on a style option.
 print("TLabel border background colour: {}"
@@ -384,7 +475,108 @@ print("TLabel border borderwidth: {}"
 
 TLabel border borderwidth: 1
 
+=====
+    # ===== Main Program if it is included in the class GUI_Application() =====
+    def button_on_off_action(self, status):
+        """Change the message and colours"""
+        if status == "on":
+            self.label_1.config(text=ON_TEXT, style='green.TLabel')
+        elif status == "off":
+            self.label_1.config(text=OFF_TEXT, style='red.TLabel')
+        else:
+            self.label_1.config(text="", style='TLabel')
+
+=====
+http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-style-layer.html
+===
+Widget class	Style name
+Button 	        TButton
+Checkbutton     TCheckbutton
+Combobox 	    TCombobox
+Entry 	        TEntry
+Frame 	        TFrame
+Label 	        TLabel
+LabelFrame 	    TLabelFrame
+Menubutton 	    TMenubutton
+Notebook 	    TNotebook
+PanedWindow     TPanedwindow (not TPanedWindow!)
+Progressbar     Horizontal.TProgressbar or Vertical.TProgressbar,
+                    depending on the orient option.
+Radiobutton     TRadiobutton
+Scale 	        Horizontal.TScale or Vertical.TScale,
+                    depending on the orient option.
+Scrollbar 	    Horizontal.TScrollbar or Vertical.TScrollbar,
+                    depending on the orient option.
+Separator 	    TSeparator
+Sizegrip 	    TSizegrip
+Treeview 	    Treeview (not TTreview!)
+
+Ttk comes with 17 widgets, eleven of which already existed in tkinter:
+Button, Checkbutton, Entry, Frame, Label, LabelFrame, Menubutton, PanedWindow,
+Radiobutton, Scale and Scrollbar.
+The other six are new:
+Combobox, Notebook, Progressbar, Separator, Sizegrip and Treeview.
+
+* = tkinter widgets - not part of ttk widgets. Others to be investigated.
+BaseWidget,
+BitmapImage,
+*Canvas,
+Image,
+*Listbox (Use ttk Combobox)
+*Message,
+*OptionMenu?,
+PhotoImage,
+*Spinbox,
+Studbutton,
+*Text,
+Tributton,
+Widget,
+Wm,
+Xview
+
+
+
+LabelFrame and Labelframe seem to be the same. With ttk opt for First letter
+uppercase and remaining letter lowercase.
+
+>>> f = ttk.LabelFrame()
+>>> fClass = f.winfo_class()
+>>> fClass
+'TLabelframe'
+
+>>> f = ttk.Labelframe()
+>>> fClass = f.winfo_class()
+>>> fClass
+'TLabelframe'
+
+Same with PanedWindow and Panedwindow...
+
+>>> p = ttk.PanedWindow()
+>>> pClass = p.winfo_class()
+>>> pClass
+'TPanedwindow'
+>>> p = ttk.Panedwindow()
+>>> pClass = p.winfo_class()
+>>> pClass
+'TPanedwindow'
+>>>
+
+
+
+===
+print(sys.path)
+
+/home/ian/python_templates
+/usr/lib/python3.4
+/usr/lib/python3.4/plat-x86_64-linux-gnu
+/usr/lib/python3.4/lib-dynload
+/usr/local/lib/python3.4/dist-packages
+/usr/lib/python3/dist-packages
+
+
+===
+
          1         2         3         4         5         6         7        7
 1234567890123456789012345678901234567890123456789012345678901234567890123456789
 
-"""
+'''
