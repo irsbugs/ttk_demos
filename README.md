@@ -16,7 +16,7 @@ program_03 Radiobutton.
 
 program_04 Checkbutton.
 
-program_05 Entry widget with validation
+program_05 Entry widget with validation and scrollbar.
 
 Notes:
 
