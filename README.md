@@ -10,11 +10,13 @@ program_00 Template
 
 program_01 Labels and Buttons.
 
-program_02 Frame with labels and buttons.
+program_02 Frame and Labelframe with labels and buttons.
 
 program_03 Radiobutton.
 
 program_04 Checkbutton.
+
+program_05 Entry widget with validation
 
 Notes:
 
