@@ -67,8 +67,10 @@ CLOSE_TEXT = "Close"
 argument_1 = 0  # For command line first argument (sys.argv[1]).
 
 # Define Constants - Feature Section:
-BUTTON_1_TEXT = "Increment"
-BUTTON_2_TEXT = "Decrement"
+BUTTON_1_TEXT = "Up"
+BUTTON_2_TEXT = "Down"
+LABELFRAME_3_TEXT = "Increment"
+LABELFRAME_4_TEXT = "Decrement"
 
 
 # Main GUI application
@@ -122,13 +124,16 @@ class GUI_Application_Feature(ttk.Frame):
                                  padding="5 5 5 5")
 
         # LabelFrame3.  # ***
-        self.frame_3 = ttk.Labelframe(self.frame_1, padding="10 10 10 10",
-                                      borderwidth=5, relief="ridge",
-                                      text="Click to Inc")
+        self.label_frame_3 = ttk.Labelframe(self.frame_1,
+                                            padding="10 10 10 10",
+                                            borderwidth=5, relief="ridge",
+                                            text=LABELFRAME_3_TEXT)
         # Labelframe4  # ***
-        self.frame_4 = ttk.Labelframe(self.frame_1, padding="10 10 10 10",
-                                      borderwidth=5, relief="ridge",
-                                      text="Click to Dec", labelanchor="sw")
+        self.label_frame_4 = ttk.Labelframe(self.frame_1,
+                                            padding="10 10 10 10",
+                                            borderwidth=5, relief="ridge",
+                                            text=LABELFRAME_4_TEXT,
+                                            labelanchor="sw")
 
         # Create Labels:
         # label_1 - Main label to display the status of the switches
@@ -136,23 +141,23 @@ class GUI_Application_Feature(ttk.Frame):
 
         # Create Buttons:
         # Button Increment
-        self.button_1 = ttk.Button(self.frame_3, text=BUTTON_1_TEXT,
+        self.button_1 = ttk.Button(self.label_frame_3, text=BUTTON_1_TEXT,
                                    command=self.button_1_callback)
         # Button Decrement
-        self.button_2 = ttk.Button(self.frame_4, text=BUTTON_2_TEXT,
+        self.button_2 = ttk.Button(self.label_frame_4, text=BUTTON_2_TEXT,
                                    command=self.button_2_callback)
 
         # Create more widgets here...
 
         # ===== Add widgets to grids in the frames =====
-        self.label_1.grid(row=0, column=0)  # padx=5, pady=5)  # ***
+        self.label_1.grid(row=0, column=0)
         self.button_1.grid(row=0, column=0, padx=10, pady=10)
         self.button_2.grid(row=0, column=0, padx=10, pady=10)
 
-        # Add the frames to the grid in the master frame
+        # Add the frames to the grid in the master frame  # ***
         self.frame_2.grid(row=0, column=0, columnspan=3, padx=5, pady=5)
-        self.frame_3.grid(row=1, column=0, padx=5, pady=5, sticky="w")  # ***
-        self.frame_4.grid(row=1, column=2, padx=5, pady=5, sticky="e")  # ***
+        self.label_frame_3.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        self.label_frame_4.grid(row=1, column=2, padx=5, pady=5, sticky="e")
 
         # Place Features master frame at top of ttk.frame
         # sticky="ew" has no effect here...
