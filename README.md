@@ -20,6 +20,8 @@ program_05 Entry widget with validation and scrollbar.
 
 program_06 Progress bar.
 
+program_07 Combobox.
+
 Notes:
 
 Only python3 is supported. The programs feature the use of the ttk widget set. This is comprised of 17 widgets and they may all be modified using the theme / style feature. There are some tkinter widgets that are frequently used in GUI applications that are not part of the ttk widget set. These tkinter widgets may be used, but they are not supported by the theme / style feature.
